@@ -12,9 +12,10 @@ from google.genai import types
 from dotenv import load_dotenv
 import os
 import logging
+import asyncio
 from typing import Optional
 
-from .tools import finance_toolsets, get_current_time
+from common.tools import finance_toolsets, get_current_time
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -85,11 +86,10 @@ def create_finance_agent() -> LlmAgent:
             name="金融分析专家",
             instruction=create_agent_instruction(),
             description="专业的金融和投资分析专家，擅长股票、基金、债券等金融产品分析",
-            tools=finance_toolsets,
+            tools=list(finance_toolsets),
             # 可以根据需要启用规划器
             # planner=PlanReActPlanner(),
         )
-        
         logger.info("金融分析智能体创建成功")
         return agent
         
@@ -97,54 +97,5 @@ def create_finance_agent() -> LlmAgent:
         logger.error(f"智能体创建失败: {e}")
         raise
 
-
-# 创建会话服务和运行器
-def create_session_and_runner(agent: LlmAgent):
-    """创建会话服务和运行器"""
-    session_service = InMemorySessionService()
-    runner = Runner(
-        agent=agent,
-        app_name="金融分析应用",
-        session_service=session_service
-    )
-    return session_service, runner
-
-
-def call_agent_sync(query: str, session_service, runner, user_id: str = "user_001", session_id: str = "session_001"):
-    """同步调用智能体"""
-    try:
-        # 确保会话存在
-        try:
-            session_service.get_session(app_name="金融分析应用", user_id=user_id, session_id=session_id)
-        except:
-            session_service.create_session(app_name="金融分析应用", user_id=user_id, session_id=session_id)
-        
-        # 创建用户消息
-        content = types.Content(role='user', parts=[types.Part(text=query)])
-        
-        # 运行智能体
-        events = runner.run(user_id=user_id, session_id=session_id, new_message=content)
-        
-        # 获取最终响应
-        for event in events:
-            if event.is_final_response():
-                return event.content.parts[0].text
-                
-        return "未收到有效响应"
-        
-    except Exception as e:
-        logger.error(f"智能体调用失败: {e}")
-        return f"处理失败: {str(e)}"
-
-
 # 主智能体实例
 root_agent = create_finance_agent()
-
-# 如果需要直接运行测试
-if __name__ == "__main__":
-    session_service, runner = create_session_and_runner(root_agent)
-    
-    # 测试查询
-    test_query = "请帮我分析一下腾讯控股(00700.HK)的最新股价和基本面情况"
-    response = call_agent_sync(test_query, session_service, runner)
-    print(f"智能体回答: {response}")
