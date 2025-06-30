@@ -5,17 +5,14 @@ SiliconFlow金融分析智能体
 
 from google.adk.agents import LlmAgent
 from google.adk.models.lite_llm import LiteLlm
-from google.adk.sessions import InMemorySessionService
-from google.adk.runners import Runner
-from google.genai import types
 
 from dotenv import load_dotenv
 import os
 import logging
-import asyncio
-from typing import Optional
 
-from common.tools import finance_toolsets, get_current_time
+from common.finance_tool import finance_toolsets
+from common.time_tool import get_current_time
+from common.search_tool import search_web
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -86,7 +83,7 @@ def create_finance_agent() -> LlmAgent:
             name="金融分析专家",
             instruction=create_agent_instruction(),
             description="专业的金融和投资分析专家，擅长股票、基金、债券等金融产品分析",
-            tools=list(finance_toolsets),
+            tools=list(finance_toolsets) + [search_web],
             # 可以根据需要启用规划器
             # planner=PlanReActPlanner(),
         )
