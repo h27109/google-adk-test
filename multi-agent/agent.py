@@ -14,7 +14,9 @@ import os
 import logging
 from typing import List, Dict, Any
 
-from common.finance_tool import finance_toolsets, get_current_time
+from common.finance_tool import finance_toolsets
+from common.time_tool import get_current_time
+from common.search_tool import search_web
 
 # 配置日志
 logging.basicConfig(level=logging.INFO)
@@ -58,7 +60,7 @@ def create_stock_analyst() -> LlmAgent:
 - 给出明确的投资建议和目标价
 - 提示风险因素
 """,
-        tools=[finance_toolsets[0]]  # 股票数据工具
+        tools=[finance_toolsets[0], search_web]  # 股票数据工具
     )
 
 
@@ -83,7 +85,7 @@ def create_fund_analyst() -> LlmAgent:
 - 给出明确的配置建议
 - 考虑投资者风险偏好
 """,
-        tools=[finance_toolsets[2]]  # 基金数据工具
+        tools=[finance_toolsets[2], search_web]  # 基金数据工具
     )
 
 
@@ -108,7 +110,7 @@ def create_risk_analyst() -> LlmAgent:
 - 根据市场环境调整策略
 - 强调风险提示和预警
 """,
-        tools=[finance_toolsets[1]]  # 财务数据工具（用于风险计算）
+        tools=[finance_toolsets[1], search_web]  # 财务数据工具（用于风险计算）
     )
 
 
@@ -133,7 +135,7 @@ def create_market_analyst() -> LlmAgent:
 - 识别投资机会和风险
 - 提供市场择时建议
 """,
-        tools=list(finance_toolsets)  # 可以使用所有数据工具
+        tools=list(finance_toolsets) + [search_web]  # 可以使用所有数据工具
     )
 
 
@@ -182,7 +184,7 @@ def create_financial_analysis_team() -> LlmAgent:
 - 给出具体的操作建议
 """,
         sub_agents=[stock_analyst, fund_analyst, risk_analyst, market_analyst],
-        tools=list(finance_toolsets)  # 团队负责人可以使用所有工具
+        tools=list(finance_toolsets) + [search_web]  # 团队负责人可以使用所有工具
     )
     
     return team_leader
@@ -197,7 +199,7 @@ def create_workflow_analysis_system() -> SequentialAgent:
         name="市场环境扫描",
         description="扫描当前市场环境和宏观因素",
         instruction="分析当前市场环境、宏观经济状况和政策环境，为后续分析提供背景",
-        tools=[finance_toolsets[1]]  # 财务数据
+        tools=[finance_toolsets[1], search_web]  # 财务数据
     )
     
     # 投资机会识别
@@ -206,7 +208,7 @@ def create_workflow_analysis_system() -> SequentialAgent:
         name="投资机会识别",
         description="基于市场环境识别投资机会",
         instruction="基于市场环境分析结果，识别当前的投资机会和热点板块",
-        tools=[finance_toolsets[0]]  # 股票数据
+        tools=[finance_toolsets[0], search_web]  # 股票数据
     )
     
     # 风险评估
@@ -215,7 +217,7 @@ def create_workflow_analysis_system() -> SequentialAgent:
         name="风险评估",
         description="评估投资机会的风险水平",
         instruction="对识别出的投资机会进行风险评估，提供风险控制建议",
-        tools=[finance_toolsets[1]]  # 财务数据用于风险计算
+        tools=[finance_toolsets[1], search_web]  # 财务数据用于风险计算
     )
     
     # 投资建议整合
@@ -224,7 +226,7 @@ def create_workflow_analysis_system() -> SequentialAgent:
         name="投资建议整合",
         description="整合分析结果，提供最终投资建议",
         instruction="整合前面的分析结果，提供综合的投资建议和操作策略",
-        tools=list(finance_toolsets)  # 可以使用所有工具进行验证
+        tools=list(finance_toolsets) + [search_web]  # 可以使用所有工具进行验证
     )
     
     return SequentialAgent(
