@@ -45,36 +45,46 @@ def create_finance_toolsets() -> List[MCPToolset]:
     if not api_key:
         raise ValueError("TUSHARE_MCP_KEY环境变量未设置，请在.env文件中配置")
     
-    # 配置OAuth2 token认证（Bearer方式）
-    auth_scheme, auth_credential = token_to_scheme_credential(
-        "oauth2Token", "header", "Authorization", api_key
-    )
+    # 确保api_key格式正确（应该包含Bearer前缀）
+    if not api_key.startswith("Bearer "):
+        api_key = f"Bearer {api_key}"
+    
+    print("使用的API密钥:", api_key)
     
     # 股票数据工具集
     tushare_stock_mcp = MCPToolset(
         connection_params=StreamableHTTPConnectionParams(
             url="http://39.108.114.122:8000/stock/mcp/",
+            headers={
+                "Authorization": api_key,
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream"
+            }
         ),
-        auth_scheme=auth_scheme,
-        auth_credential=auth_credential,
     )
     
     # 财务数据工具集  
     tushare_finance_mcp = MCPToolset(
         connection_params=StreamableHTTPConnectionParams(
             url="http://39.108.114.122:8000/finance/mcp/",
+            headers={
+                "Authorization": api_key,
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream"
+            }
         ),
-        auth_scheme=auth_scheme,
-        auth_credential=auth_credential,
     )
     
     # 基金数据工具集
     tushare_fund_mcp = MCPToolset(
         connection_params=StreamableHTTPConnectionParams(
             url="http://39.108.114.122:8000/fund/mcp/",
+            headers={
+                "Authorization": api_key,
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream"
+            }
         ),
-        auth_scheme=auth_scheme,
-        auth_credential=auth_credential,
     )
     
     return [tushare_stock_mcp, tushare_finance_mcp, tushare_fund_mcp]
