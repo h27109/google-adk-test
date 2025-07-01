@@ -36,13 +36,43 @@ def setup_siliconflow_model():
     model_name = os.getenv("SILICONFLOW_MODEL", "Pro/deepseek-ai/DeepSeek-V3")
     return LiteLlm(model=f"openai/{model_name}")
 
+def setup_deepseek_model():
+    """配置DeepSeek模型"""
+    api_key = os.getenv("DEEPSEEK_API_KEY")
+    if api_key is None:
+        raise ValueError("DEEPSEEK_API_KEY 环境变量未设置")
+    os.environ["OPENAI_API_KEY"] = api_key
+    os.environ["OPENAI_BASE_URL"] = "https://api.deepseek.com"
+    model_name = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
+    return LiteLlm(model=f"openai/{model_name}")
 
+def setup_tencent_model():
+    """配置腾讯模型"""
+    api_key = os.getenv("TENCENT_API_KEY")
+    if api_key is None:
+        raise ValueError("TENCENT_API_KEY 环境变量未设置")
+    os.environ["OPENAI_API_KEY"] = api_key
+    os.environ["OPENAI_BASE_URL"] = os.getenv("TENCENT_BASE_URL","https://api.hunyuan.cloud.tencent.com/v1")
+    model_name = os.getenv("TENCENT_MODEL", "hunyuan-t1-latest")
+    return LiteLlm(model=f"openai/{model_name}")
+
+def setup_model():
+    model_provider = os.getenv("MODEL_PROVIDER").lower()
+    if model_provider == "siliconflow":
+        return setup_siliconflow_model()
+    elif model_provider == "deepseek":
+        return setup_deepseek_model()
+    elif model_provider == "tencent":
+        return setup_tencent_model()
+    else:
+        raise ValueError(f"不支持的模型提供者: {model_provider}")
+    
 # ============= 专业智能体定义 =============
 
 def create_stock_analyst() -> LlmAgent:
     """创建股票分析专家"""
     return LlmAgent(
-        model=setup_siliconflow_model(),
+        model=setup_model(),
         name="股票分析专家",
         description="专门分析个股技术面、基本面和估值，提供买卖建议",
         instruction=f"""
@@ -67,7 +97,7 @@ def create_stock_analyst() -> LlmAgent:
 def create_fund_analyst() -> LlmAgent:
     """创建基金分析专家"""
     return LlmAgent(
-        model=setup_siliconflow_model(),
+        model=setup_model(),
         name="基金分析专家", 
         description="专门分析基金业绩、投资组合和基金经理，提供基金投资建议",
         instruction=f"""
@@ -92,7 +122,7 @@ def create_fund_analyst() -> LlmAgent:
 def create_risk_analyst() -> LlmAgent:
     """创建风险评估专家"""
     return LlmAgent(
-        model=setup_siliconflow_model(),
+        model=setup_model(),
         name="风险评估专家",
         description="专门进行投资风险评估、风险控制和资产配置建议",
         instruction=f"""
@@ -117,7 +147,7 @@ def create_risk_analyst() -> LlmAgent:
 def create_market_analyst() -> LlmAgent:
     """创建市场分析专家"""
     return LlmAgent(
-        model=setup_siliconflow_model(),
+        model=setup_model(),
         name="市场分析专家",
         description="专门分析宏观经济、行业趋势和市场情绪",
         instruction=f"""
@@ -152,7 +182,7 @@ def create_financial_analysis_team() -> LlmAgent:
     
     # 创建团队负责人
     team_leader = LlmAgent(
-        model=setup_siliconflow_model(),
+        model=setup_model(),
         name="金融分析团队负责人",
         description="协调金融分析团队，综合各专家意见提供投资决策",
         instruction=f"""
@@ -195,7 +225,7 @@ def create_workflow_analysis_system() -> SequentialAgent:
     
     # 市场环境分析
     market_scanner = LlmAgent(
-        model=setup_siliconflow_model(),
+        model=setup_model(),
         name="市场环境扫描",
         description="扫描当前市场环境和宏观因素",
         instruction="分析当前市场环境、宏观经济状况和政策环境，为后续分析提供背景",
@@ -204,7 +234,7 @@ def create_workflow_analysis_system() -> SequentialAgent:
     
     # 投资机会识别
     opportunity_finder = LlmAgent(
-        model=setup_siliconflow_model(),
+        model=setup_model(),
         name="投资机会识别",
         description="基于市场环境识别投资机会",
         instruction="基于市场环境分析结果，识别当前的投资机会和热点板块",
@@ -213,7 +243,7 @@ def create_workflow_analysis_system() -> SequentialAgent:
     
     # 风险评估
     risk_evaluator = LlmAgent(
-        model=setup_siliconflow_model(),
+        model=setup_model(),
         name="风险评估",
         description="评估投资机会的风险水平",
         instruction="对识别出的投资机会进行风险评估，提供风险控制建议",
@@ -222,7 +252,7 @@ def create_workflow_analysis_system() -> SequentialAgent:
     
     # 投资建议整合
     recommendation_integrator = LlmAgent(
-        model=setup_siliconflow_model(),
+        model=setup_model(),
         name="投资建议整合",
         description="整合分析结果，提供最终投资建议",
         instruction="整合前面的分析结果，提供综合的投资建议和操作策略",
