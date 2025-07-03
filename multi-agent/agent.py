@@ -214,7 +214,7 @@ def create_financial_analysis_team() -> LlmAgent:
 - 给出具体的操作建议
 """,
         sub_agents=[stock_analyst, fund_analyst, risk_analyst, market_analyst],
-        tools=list(finance_toolsets) + [search_web]  # 团队负责人可以使用所有工具
+        tools=[search_web]  # 团队负责人可以使用所有工具
     )
     
     return team_leader
