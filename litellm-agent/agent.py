@@ -105,8 +105,8 @@ def create_finance_agent() -> LlmAgent:
             name="金融分析专家",
             instruction=create_agent_instruction(),
             description="专业的金融和投资分析专家，擅长股票、基金、债券等金融产品分析",
-            #tools=list(finance_toolsets) + [search_web],
-            tools=[search_web],
+            tools=list(finance_toolsets) + [search_web],
+            #tools=[search_web],
             # 可以根据需要启用规划器
             # planner=PlanReActPlanner(),
         )
