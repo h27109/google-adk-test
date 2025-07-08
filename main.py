@@ -1,4 +1,5 @@
 import os
+import sys
 
 import uvicorn
 from google.adk.cli.fast_api import get_fast_api_app
@@ -28,5 +29,5 @@ async def read_root():
     return {"Hello": "World"}
 
 if __name__ == "__main__":
-    # Use the PORT environment variable provided by Cloud Run, defaulting to 8080
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    port = sys.argv[1]
+    uvicorn.run(app, host="0.0.0.0", port=int(port))
