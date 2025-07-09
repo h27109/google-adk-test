@@ -433,7 +433,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "google-adk", specifier = ">=1.5.0" },
-    { name = "litellm", specifier = ">=1.73.2" },
+    { name = "litellm", specifier = ">=1.74.0" },
     { name = "tavily-python", specifier = ">=0.7.8" },
 ]
 
@@ -1064,7 +1064,7 @@ wheels = [
 
 [[package]]
 name = "litellm"
-version = "1.73.2"
+version = "1.74.0.post1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -1079,10 +1079,7 @@ dependencies = [
     { name = "tiktoken" },
     { name = "tokenizers" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/00/d6/0b548d66a7756c06e32a0e2b0fc6d08992acc4e77a022f4a571687dc57ad/litellm-1.73.2.tar.gz", hash = "sha256:5a32e631d5002b2e56bb083d13c5d7931e39f13083c9f9bf081e5c0cc871fae8", size = 8694140 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/90/88/0e6b39d64b5dad133f9fae9bfe7168cfef6eb6c59f8fce31eb953a764b0d/litellm-1.73.2-py3-none-any.whl", hash = "sha256:221c8169335bd6032f2f4b366f471ab5c52758912facf4f7cd0022ed79488a03", size = 8401820 },
-]
+sdist = { url = "https://files.pythonhosted.org/packages/4d/68/a58b31f25c42fe052d7e7a0fc27d96d20c88b171070acc7b5d3cd553db0e/litellm-1.74.0.post1.tar.gz", hash = "sha256:417b08d0584ffc2788386261f1b3dea6e0b1b09b0231f48c46426c0c7a9b7278", size = 9032360 }
 
 [[package]]
 name = "markupsafe"
