@@ -173,7 +173,7 @@ def create_market_analyst() -> LlmAgent:
 
 def create_financial_analysis_team() -> LlmAgent:
     """创建金融分析团队 - 层次结构模式"""
-    
+    load_dotenv(override=True)
     # 创建专业分析师
     stock_analyst = create_stock_analyst()
     fund_analyst = create_fund_analyst() 
@@ -222,7 +222,7 @@ def create_financial_analysis_team() -> LlmAgent:
 
 def create_workflow_analysis_system() -> SequentialAgent:
     """创建工作流分析系统 - 顺序执行模式"""
-    
+    load_dotenv(override=True)
     # 市场环境分析
     market_scanner = LlmAgent(
         model=setup_model(),
@@ -267,7 +267,7 @@ def create_workflow_analysis_system() -> SequentialAgent:
 
 def create_parallel_analysis_system() -> ParallelAgent:
     """创建并行分析系统 - 并行执行模式"""
-    
+    load_dotenv(override=True)
     return ParallelAgent(
         name="并行投资分析",
         sub_agents=[

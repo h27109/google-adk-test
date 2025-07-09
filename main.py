@@ -29,5 +29,21 @@ async def read_root():
     return {"Hello": "World"}
 
 if __name__ == "__main__":
-    port = sys.argv[1]
-    uvicorn.run(app, host="0.0.0.0", port=int(port))
+    import argparse
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", type=str, default="127.0.0.1", help="服务监听地址")
+    parser.add_argument("--port", type=int, default=8080, help="服务监听端口")
+    parser.add_argument("--reload", action="store_true", help="是否启用热重载")
+    parser.add_argument("--workers", type=int, default=1, help="工作进程数")
+    parser.add_argument("--log-level", type=str, default="info", help="日志级别")
+    args = parser.parse_args()
+
+    uvicorn.run(
+        app,
+        host=args.host,
+        port=args.port,
+        reload=args.reload,
+        workers=args.workers,
+        log_level=args.log_level
+    )
